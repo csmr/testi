@@ -16,8 +16,14 @@ end
 
 reqs = []
 argv = OptionParser.new do |opts|
+  opts.banner = "Usage: #{File.basename(__FILE__)} [options] [FILENAME...]"
   opts.on '-r', '--require NAME', String, 'require NAME before doing anything, multiple requires can be used' do |v|
     reqs << v
+  end
+
+  opts.on '-h', '--help', 'Displays help message' do
+    puts opts
+    exit
   end
 end.parse(ARGV)
 reqs.each do |v|
