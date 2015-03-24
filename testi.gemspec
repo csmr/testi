@@ -12,4 +12,5 @@ Gem::Specification.new do |s|
   s.files = ['README.md'] +
             Dir.glob('lib/**/*.rb') +
             Dir.glob('testi/**/*.rb')
+  s.executables = ['testi']
 end
