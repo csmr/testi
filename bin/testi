@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+require 'optparse'
+require 'testi'
+
+def load_test_file(filename)
+  testi(filename) do
+    instance_eval File.read(filename)
+  end
+rescue Interrupt
+  exit
+rescue Exception => ex
+  STDERR.puts "TestError (#{filename}):"
+  STDERR.puts ex.inspect
+  STDERR.puts ex.backtrace.join("\n")
+end
+
+reqs = []
+argv = OptionParser.new do |opts|
+  opts.banner = "Usage: #{File.basename(__FILE__)} [options] [FILENAME...]"
+  opts.on '-r', '--require NAME', String, 'require NAME before doing anything, multiple requires can be used' do |v|
+    reqs << v
+  end
+
+  opts.on '-h', '--help', 'Displays help message' do
+    puts opts
+    exit
+  end
+end.parse(ARGV)
+reqs.each do |v|
+  require v
+end
+
+# if no filenames where given, looking for a testi directory and load everything you can.
+if ARGV.empty?
+  Dir.glob('testi/**/*.rb') do |filename|
+    load_test_file filename
+  end
+else
+  ARGV.each do |filename|
+    load_test_file filename
+  end
+end
+
+testi_display_result
